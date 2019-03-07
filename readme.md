@@ -66,8 +66,12 @@ mv /var/lib/postgresql/10/main/ /var/lib/postgresql/10/main.bak
 vi /etc/postgresql/10/main/postgresql.conf 
 ```
 line:
-41    data_directory = '/var/lib/postgresql/10/main'     --> 1 data_directory = '/var/lib/postg2safe/10/main'  <-- NB! : new path *postg2safe*  old path  *postgresql*
-
+41    
+data_directory = '/var/lib/postgresql/10/main'     
+ become--> 1 data_directory = '/var/lib/postg2safe/10/main'  
+```
+ NB! : new path *postg2safe*  old path  *postgresql*
+```
 
 service postgresql start
 ```
