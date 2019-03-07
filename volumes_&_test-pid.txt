@@ -1,0 +1,39 @@
+ "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/opt/eudat/myrules",
+                "Destination": "/var/lib/irods/myrules",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            },
+            {
+                "Type": "bind",
+                "Source": "/data/data_icat_db",
+                "Destination": "/var/lib/postgsql/data",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            },
+            {
+                "Type": "bind",
+                "Source": "/mnt/seedstore_nfs",
+                "Destination": "/var/lib/datairods",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            },
+            {
+                "Type": "bind",
+                "Source": "/opt/eudat/myVault",
+                "Destination": "/var/lib/irods/Vault",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            }
+
+11099/bd6b9d0e-aab9-11e8-b507-0242ac110002
+
+11099/55e3a4e6-aaba-11e8-9edb-0242ac110002
+
+
