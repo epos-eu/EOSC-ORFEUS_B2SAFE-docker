@@ -1,88 +1,66 @@
+# B2SAFE All-in-One Docker container
 
+This is a whole B2SAFE environment in a single Docker container. It includes PostgreSQL, the ICAT database for iRODS, iRODS itself, and B2HANDLE.
 
-## build and run B2Safe all-in-one (with icat database)
-
-a B2SAFE in a container
+## Setup and deployment
 
 note: every name and directory are not mandatory (except for the database) they could be whatever.
 
-1)build an image within irods and icat postrgesql:
-===============================================
+### 1) Build the Docker image
 ```
 docker build -t "b2safe_aio:4.1.1" .
 ```
-(4.1.1 is B2Safe version)
+(4.1.1 is the B2SAFE version)
 
-2)launch the all-in-one container:
-===============================
+### 2) Launch the container
 ```
 docker run -it --name eudat_b2safe  -v /data/b2safe_icat_db:/var/lib/postg2safe -v /mnt/seedstore_nfs:/var/lib/datairods -v /opt/eudat/b2safeRules:/var/lib/irods/myrules -v /opt/eudat/b2safeVault:/var/lib/irods/Vault -p 1247:1247 -p 1248:1248 -p 5432:5432 -p 20000-20199:20000-20199   b2safe_aio:4.1.1 /bin/bash
 ```
 
-there are several volumes (host directory) mounted on container, they are:
+There are several volumes (host directories) mounted on container, they are:
 
-Database data-directory:
-<host path> : <container path>
-/data/b2safe_icat_db:/var/lib/postg2safe
+* Database data directory: `/data/b2safe_icat_db:/var/lib/postg2safe`
 
-Repository of Mseed files:
-/mnt/seedstore_nfs:/var/lib/datairods
+* Repository of miniSEED files: `/mnt/seedstore_nfs:/var/lib/datairods`
 
-directory of rules:
-/opt/eudat/b2safeRules:/var/lib/irods/myrules
+* Rules directory: `/opt/eudat/b2safeRules:/var/lib/irods/myrules`
 
-Vault directory (the directory used by irods to store files - not for our case but useful)
-/opt/eudat/b2safeVault:/var/lib/irods/Vault
+* Vault directory (the directory used by irods to store files - not for our case but useful) `/opt/eudat/b2safeVault:/var/lib/irods/Vault`
 
-in order to make persistent all data inside irods and icat db;
-the rules directory is used to update some script , if needed, without touch the container.
+These volumes are mounted in order to make persistent all data inside iRODS and ICAT, the rules directory can be also used to update scripts, if needed, without going inside the container.
 
- after docker container is started you are into container:
+After the Docker container is started, the command prompt is into the container. From this point on, all commands are input from insite the container.
 
-3)SETUP iRODS as data-provider:
-============================
+### 3) Setup ICAT and iRODS
 
-inside container
-----------------
+First, configure PostgreSQL to use `/var/lib/postg2safe` as its data directory, instead of the default `/var/lib/postgresql`.
 
-move data-dir postgres:
-======================
-be aware that
-
-mounted dir::/data/b2safe_icat_db  
-inside dir::/var/lib/postg2safe 
-postgres dir: /var/lib/postgresql
-
+Start by stopping the `postgresql` service, creating the new directory, and backing up the old one:
 ```
 service postgresql  stop
 
-(apt-get install rsync - if needed)
 mkdir /var/lib/postg2safe
 chown -R postgres:postgres /var/lib/postg2safe/
 rsync -av /var/lib/postgresql/ /var/lib/postg2safe/
 mv /var/lib/postgresql/10/main/ /var/lib/postgresql/10/main.bak
 ```
 
-vi /etc/postgresql/10/main/postgresql.conf 
+Then, edit the file `/etc/postgresql/10/main/postgresql.conf`. In the line 41, replace
 ```
-line:
-41    
-data_directory = '/var/lib/postgresql/10/main'     
- become--> 1 data_directory = '/var/lib/postg2safe/10/main'  
+data_directory = '/var/lib/postgresql/10/main'
 ```
- NB! : new path *postg2safe*  old path  *postgresql*
+with
+```
+data_directory = '/var/lib/postg2safe/10/main'
 ```
 
+Finally, restart PostgreSQL.
+```
 service postgresql start
 ```
-prep ICAT 
----------
 
+The next step it to prepare the `ICAT` database that will be used by iRODS. As the `postgres` user, launch the `psql` console and create the database:
 
-
-inside psql:
-
-from root become postgres user
 ```
 su - postgres
 
@@ -101,23 +79,21 @@ postgres=#
 exit
 ```
 
-
 eventually restore
 ```
 postgresql restore old b2safe_icat
 psql -h localhost -U irods -d "ICAT_BKP1" <  /var/lib/irods/myrules/mydb-irods422_dump.sql
 ```
 
-
-
-setup irods
------------
-from root
+Now, we are ready to setup iRODS. Back as the root user, launch the setup script with
 ```
 python /var/lib/irods/scripts/setup_irods.py
+```
+
+This script interactively asks for a number of answers about the installation.
 
 reply on interactive installation:
-
+```
 user:irods password:xxxx 
 ```
 be aware for these values
@@ -133,10 +109,10 @@ be aware for these values
 "zone_user": "XXXXXXXX"
 ```
 
-4)start IRODS:
-=============
+### 4) Start iRODS
 
-become irods user
+Become the `irods` user and start the service:
+
 ```
 su - irods
 
@@ -144,10 +120,9 @@ cd /var/lib/irods
 ./irodsctl start
 ```
 
-5)check IRODS:
-==============
+### 5) Check iRODS status
 
-in order to test if all is ok 
+In order to test if the setup is successful, log into iRODS and try an iCommand:
 ```
 su - irods
 
@@ -159,49 +134,48 @@ ils
 ```
 --> irods works!
 
+### 6) Setup B2SAFE and B2HANDLE
 
-6)B2SAFE & B2HANDLE:
-====================
-
-### Make packages
+Again as `irods`, build the B2SAFE package.
 
 check install.conf into /opt/eudat/b2safe/B2SAFE-core/packaging if is correctly setting - permission owner (irods)
 chek owner and permission in /opt/eudat/cert/ (owner : irods  - 0644)
 
+```
 su - irods
 cd /opt/eudat/b2safe/B2SAFE-core/packaging
 ./create_deb_package.sh
 sudo dpkg -i /home/irods/debbuild/irods-eudat-b2safe_4.1-1.deb
+```
 
-
-### install/configure B2Safe as the user who runs iRODS
+Then install/configure B2SAFE:
+```
 sudo -s source /etc/irods/service_account.config
 cd /opt/eudat/b2safe/B2SAFE-core/packaging
- ./install.sh
- ATTENTION-> password for EPIC prefix required! XXXXXXXX
+./install.sh
+```
 
-### install B2HANDLE
+ATTENTION-> password for EPIC prefix required! XXXXXXXX
+
+To install B2HANDLE, we use an `.egg` Easy Install package:
+```
 cd /opt/eudat/B2HANDLE/dist/
- sudo easy_install b2handle-1.1.1-py2.7.egg
+sudo easy_install b2handle-1.1.1-py2.7.egg
+```
 
+### 7) Check B2SAFE and B2HANDLE status
 
-7)check B2Safe B2Handle:
-=========================
-
-### B2Safe::
-
+To check the status of B2SAFE, run a basic rule:
+```
 cd /opt/eudat/b2safe/B2SAFE-core/rules
-
 irule -vF eudatGetV.r
+```
 
---> B2Safe works!
-
-
-### B2Handle::
-
+To check the status of B2HANDLE, run the two EPIC client scripts:
+```
 /opt/eudat/b2safe/cmd/epicclient.py os /opt/eudat/b2safe/conf/credentials create www.test-b2safe1.com
-
 /opt/eudat/b2safe/cmd/epicclient2.py os /opt/eudat/b2safe/conf/credentials create www.Bella-b2safe3.com
+```
 
 REMEMBER-> copy epicclient2.py on epicclient.py 'couse B2SAFE use only epicclient.py 
 
@@ -209,8 +183,7 @@ REMEMBER-> copy epicclient2.py on epicclient.py 'couse B2SAFE use only epicclien
 
 
 
-8)build Federation
-===================
+### 8) Build Federation
 
 in server_config.json add:
 
@@ -242,16 +215,3 @@ add password
 ```
 moduser Name#Zone(zzzz#XXXXX) password -newValue
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
