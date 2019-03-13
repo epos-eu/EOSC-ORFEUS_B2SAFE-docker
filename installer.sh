@@ -11,7 +11,8 @@ chown -R postgres:postgres /var/lib/icat_db/
 rsync -av /var/lib/postgresql/ /var/lib/icat_db/
 mv /var/lib/postgresql/11/main/ /var/lib/postgresql/11/main.bak
 # modify DB path
-sed -i -E "s/(data_directory.+)postgresql(.+\/main)/\1icat_db\2/" /etc/postgresql/11/main/postgresql.conf
+dir=$(find /etc/postgresql/ -mindepth 1 -maxdepth 1 -type d)
+sed -i -E "s/(data_directory.+)postgresql(.+\/main)/\1icat_db\2/" $dir/main/postgresql.conf
 
 # start database
 #
