@@ -9,9 +9,9 @@
 mkdir /var/lib/icat_db
 chown -R postgres:postgres /var/lib/icat_db/
 rsync -av /var/lib/postgresql/ /var/lib/icat_db/
-mv /var/lib/postgresql/10/main/ /var/lib/postgresql/10/main.bak
+mv /var/lib/postgresql/11/main/ /var/lib/postgresql/11/main.bak
 # modify DB path
-sed -i -E "s/(data_directory.+)postgresql(.+\/main)/\1icat_db\2/" /etc/postgresql/10/main/postgresql.conf
+sed -i -E "s/(data_directory.+)postgresql(.+\/main)/\1icat_db\2/" /etc/postgresql/11/main/postgresql.conf
 
 # start database
 #
