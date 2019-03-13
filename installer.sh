@@ -42,14 +42,14 @@ chown irods:irods /opt/eudat/b2safe/B2SAFE-core/packaging/install.conf
 chmod 0644 /opt/eudat/cert/*.pem
 
 # su - irods
-sudo -u irods cd /opt/eudat/b2safe/B2SAFE-core/packaging
+cd /opt/eudat/b2safe/B2SAFE-core/packaging
 sudo -u irods  ./create_deb_package.sh
 sudo dpkg -i /home/irods/debbuild/irods-eudat-b2safe_4.1-1.deb
 
 
 # install/configure B2Safe as the user who runs iRODS
 sudo -s source /etc/irods/service_account.config
-sudo -u irods cd /opt/eudat/b2safe/B2SAFE-core/packaging
+cd /opt/eudat/b2safe/B2SAFE-core/packaging
 sudo -u irods  ./install.sh
 # ATTENTION-> password for EPIC prefix required! XXXXXXXX
 
