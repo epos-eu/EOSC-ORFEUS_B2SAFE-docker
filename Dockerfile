@@ -11,8 +11,8 @@ RUN apt-get update
 ### base ###
 ###
 
-RUN apt-get update && apt-get install -y lsb-core sudo
-RUN apt-get install -y wget git 
+RUN apt-get update && apt-get install -y lsb-core 
+RUN apt-get install -y wget git rsync
 RUN apt-get install -y apt-transport-https 
 RUN apt-get install -y sudo vim
 RUN apt-get install -y ca-certificates
@@ -83,11 +83,19 @@ USER irods
 RUN mkdir -p /opt/eudat/cert
 
 COPY conf/install.conf    /opt/eudat/b2safe/B2SAFE-core/packaging
-COPY cert_key/*.pem    /opt/eudat/cert
+# RUN chown irods:irods /opt/eudat/b2safe/B2SAFE-core/packaging/install.conf
+
+COPY cert_key/*.pem    /opt/eudat/cert 
 COPY cert_only/*.pem    /opt/eudat/cert
 COPY cert_ca/*.pem    /opt/eudat/cert
+# RUN chmod 0644 /opt/eudat/cert/*.pem
 
-WORKDIR /opt/eudat
 USER root
+
+COPY installer.sh /root/installer.sh
+RUN chmod +x /root/installer.sh
+
+WORKDIR /root
+
 
 EXPOSE 5432 1247 1248 20000-20199
