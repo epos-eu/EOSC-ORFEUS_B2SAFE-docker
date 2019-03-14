@@ -4,7 +4,7 @@ This is a whole B2SAFE environment in a single Docker container, and with a simp
 
 The Docker container created is named `eudat_b2safe` and publishes ports 1247, 1248, 5432, and the range 20000-20199. There are several volumes (host directories) mounted on container, they are (in the form `host_directory:container_directory`):
 
-* Database data directory: `/data/b2safe_icat_db:/var/lib/postg2safe`
+* Database data directory: `/data/b2safe_icat_db:/var/lib/icat_db`
 
 * Repository of miniSEED files: `/mnt/seedstore_nfs:/var/lib/datairods`
 
