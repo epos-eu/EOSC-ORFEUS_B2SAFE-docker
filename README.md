@@ -24,7 +24,7 @@ The service is configured and launched with just a few steps:
 
 1. Copy the `.pem` certificate files to `cert_ca/`, `cert_key/`, and `cert_only/` directories.
 
-1. Fill in the username and password for the irods database user, in the line 26 of `installer.sh`.
+1. Fill in the username and password for the irods database user, in the line 31 of `installer.sh`.
 
 1. Run the setup script `setup.sh`. This will build the Docker container, launch it, and then install iRODS, B2SAFE and B2HANDLE into it.
 <br>The iRODS setup will interactively ask for user input on its configuration. For more information about these values, see the [iRODS beginner training](https://github.com/irods/irods_training/tree/ugm2018/beginner).
