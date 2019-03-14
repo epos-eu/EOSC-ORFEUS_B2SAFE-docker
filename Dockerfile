@@ -11,11 +11,7 @@ RUN apt-get update
 ### base ###
 ###
 
-RUN apt-get update && apt-get install -y lsb-core 
-RUN apt-get install -y wget git rsync
-RUN apt-get install -y apt-transport-https 
-RUN apt-get install -y sudo vim
-RUN apt-get install -y ca-certificates
+RUN apt-get update && apt-get install -y lsb-core wget git rsync apt-transport-https sudo vim ca-certificates
 
 
 ###
@@ -47,10 +43,7 @@ RUN sudo apt-get install -y python-pip
 RUN sudo pip install queuelib
 RUN sudo pip install dweepy
 RUN sudo pip install psycopg2-binary
-RUN sudo apt-get install -y python-lxml
-RUN sudo apt-get install -y python-defusedxml
-RUN sudo apt-get install -y python-httplib2
-RUN sudo apt-get install -y python-simplejson
+RUN sudo apt-get install -y python-lxml python-defusedxml python-httplib2 python-simplejson
 
 ### make irods user
 
