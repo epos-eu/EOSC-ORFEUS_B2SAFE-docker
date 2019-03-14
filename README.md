@@ -28,7 +28,7 @@ The service is configured and launched with just a few steps:
 
 1. Run the setup script `setup.sh`. This will build the Docker container, launch it, and then install iRODS, B2SAFE and B2HANDLE into it.
 <br>The iRODS setup will interactively ask for user input on its configuration. For more information about these values, see the [iRODS beginner training](https://github.com/irods/irods_training/tree/ugm2018/beginner).
-<br>For most variables, the default values should be used, but we want to call special attention to a few of them. Database username and password must be the same defined in the preceding step, in `installer.sh`. For iRODS user and server's administrator username, the default values should be used, `irods` and `rods`, respectively. iRODS server's administrator password must be defined and kept safe. It is also important to keep the iRODS server's zone, negotiation and control plane keys, because they will be used for federation.
+<br>For most variables, the default values should be used, but we want to call special attention to a few of them. Database username and password must be the same defined in the preceding step, in `installer.sh`. For iRODS user and server's administrator username, the default values should be used, `irods` and `rods`, respectively. iRODS server's administrator password must be defined and kept safe. It is also important to keep the iRODS server's zone, negotiation and control plane keys, because they will be used for federation. Moreover be aware that during the B2HANDLE installation will be required account EPIC-PID password. 
 
 1. Start up the iRODS service, by running `start.sh`. 
 
