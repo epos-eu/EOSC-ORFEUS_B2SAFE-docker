@@ -48,8 +48,6 @@ chmod 0644 /opt/eudat/cert/*.pem
 
 # B2SAFE
 echo '**start b2safe'
-cd /opt/eudat/b2safe/B2SAFE-core/packaging
-sudo -H -u irods bash -c './create_deb_package.sh'
 pack=$(find /home/irods/debbuild/ -mindepth 1 -maxdepth 1 -type f)
 dpkg -i $pack
 
