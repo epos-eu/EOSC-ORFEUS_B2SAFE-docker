@@ -37,3 +37,9 @@ It is possible to check if iRODS is running, with the following command:
 docker exec -it --user irods eudat_b2safe ils
 ```
 Its response should be something like `/tempZone/home/rods`.
+
+To verify the B2SAFE installation, run the command
+```
+docker exec -it --user irods eudat_b2safe irule -vF /opt/eudat/b2safe/B2SAFE-core/rules/eudatGetV.r
+```
+It should output a success message and the B2SAFE version.
